@@ -1,0 +1,16 @@
+/*
+  GET  : URL 주소 끝에 파라미터로 포함되어 전송 (쿼리스트링)
+          해당 페이지로 이동 가능 (?id=HTML)
+          보안 X, 글 작성 시 사용 금지
+  POST : HTTP 메시지 body 부분에 담아서 서버로 보냄
+*/
+
+<form action="http://localhost:3000/process_create" method="post">
+  <p><input type="text" name="title"></p>
+  <p>
+    <textarea name="description"></textarea>
+  </p>
+  <p>
+    <input type="submit">
+  </p>
+</form>

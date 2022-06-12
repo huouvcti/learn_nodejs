@@ -1,0 +1,18 @@
+- 설치
+npm install pm2 -g
+
+
+- 실행중인 프로그램 리스트
+pm2 list
+
+- 시작
+pm2 start {파일명}
+pm2 start {파일명} --watch				//  자동 리로드
+pm2 start main.js --watch --ignore-watch="data/*"		// data 디렉토리 제외
+
+-종료
+pm2 stop {name}
+
+- 모니터링
+pm2 monit
+
