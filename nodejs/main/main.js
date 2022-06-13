@@ -36,49 +36,17 @@ var http = require('http');       // http
 var fs = require('fs');           // file
 var url = require('url');         // url
 var qs = require('querystring');  // querystring
+var path = require('path');       // path
 
-function templateHTML(title, list, description){
-  var t = `
-    <!doctype html>
-    <html>
-    <head>
-      <title>WEB1 - ${title}</title>
-      <meta charset="utf-8">
-    </head>
-    <body>
-      <h1><a href="/">WEB</a></h1>
-      <ol>
-        ${list}
-      </ol>
-      <a href="/create">create</a> `;
-  var b = `<h2>${title}</h2>
-             <p>${description}</p>
-             </html>`;
-  var m = `<a href="/update?id=${title}">update</a>
-           <form action="delete_process" method="post">
-             <input type="hidden" name="title" value="${title}">
-             <input type="submit" value="delete">
-           </form>`;
-
-  if(title === 'welcome'){
-    return t + b;
-  } else{
-    return t + m + b;
-  }
-}
-
-function templateList(filelist){
-  var l = "";
-  for(var i=0; i<filelist.length; i++){
-    l += `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
-  }
-  return l;
-}
+var template = require('./lib/template.js');
 
 var app = http.createServer(function(request,response){
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
+
+    // 보안처리
+    var filtered_id = path.parse(queryData.id).base;
 
     console.log(queryData.id);
     console.log(pathname);
@@ -86,12 +54,13 @@ var app = http.createServer(function(request,response){
     if(pathname === '/'){
       // 파일 리스트 가져오기
       fs.readdir('./file', function(err, filelist){
-        var list = templateList(filelist);
+        var list = template.List(filelist);
 
         // 파일 읽기
         var title;
         var description;
-        fs.readFile(`file/${queryData.id}`, 'utf8', function(err, des){
+
+        fs.readFile(`file/${filtered_id}`, 'utf8', function(err, des){
 
           if(queryData.id === undefined){
             title = "welcome";
@@ -101,11 +70,11 @@ var app = http.createServer(function(request,response){
             description = des;
           }
 
-          var template = templateHTML(title, list, description);
+          var _template = template.Html(title, list, description);
 
 
           response.writeHead(200);
-          response.end(template);
+          response.end(_template);
 
         });
       });
@@ -157,7 +126,7 @@ var app = http.createServer(function(request,response){
     } else if(pathname === '/update'){    //update
       var menu_title = 'update';
 
-      fs.readFile(`file/${queryData.id}`, 'utf8', function(err, des){
+      fs.readFile(`file/${filtered_id}`, 'utf8', function(err, des){
         var title = queryData.id;
         var description = des;
 
