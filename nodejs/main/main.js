@@ -37,6 +37,7 @@ var fs = require('fs');           // file
 var url = require('url');         // url
 var qs = require('querystring');  // querystring
 var path = require('path');       // path
+// var sanitizeHtml = require('sanitize-html');
 
 var template = require('./lib/template.js');
 
@@ -45,7 +46,7 @@ var app = http.createServer(function(request,response){
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
 
-    // 보안처리
+    // 입력 정보 보안
     var filtered_id = path.parse(queryData.id).base;
 
     console.log(queryData.id);
@@ -68,6 +69,12 @@ var app = http.createServer(function(request,response){
           } else {
             title = queryData.id;
             description = des;
+
+            // 출력 정보 보안
+            // var sanitized_title = sanitizeHtml(title);
+            // var sanitized_description = sanitizeHtml(description, {
+            //   allowedTags: ['b']
+            // });
           }
 
           var _template = template.Html(title, list, description);
