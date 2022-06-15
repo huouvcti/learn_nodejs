@@ -8,11 +8,11 @@ pm2 list
 - 시작
 pm2 start {파일명}
 pm2 start {파일명} --watch				//  자동 리로드
-pm2 start main.js --watch --ignore-watch="data/*"		// data 디렉토리 제외
+pm2 start main.js --watch --ignore-watch="file/*"	// data 디렉토리 제외
+pm2 start {파일명} --wach --no-daemon		// background 실행 X, log 바로 보기
 
 -종료
 pm2 stop {name}
 
 - 모니터링
 pm2 monit
-

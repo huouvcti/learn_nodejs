@@ -29,6 +29,9 @@
 */
 // CRUD (Create, Read, Update, Delete)
 
+/* API
+  https://nodejs.org/dist/latest-v16.x/docs/api/
+*/
 
 
 // 모듈
@@ -37,8 +40,7 @@ var fs = require('fs');           // file
 var url = require('url');         // url
 var qs = require('querystring');  // querystring
 var path = require('path');       // path
-// var sanitizeHtml = require('sanitize-html');
-
+var sanitizeHtml = require('sanitize-html');
 var template = require('./lib/template.js');
 
 var app = http.createServer(function(request,response){
@@ -46,8 +48,8 @@ var app = http.createServer(function(request,response){
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
 
-    // 입력 정보 보안
-    var filtered_id = path.parse(queryData.id).base;
+    // 입력 보안 처리
+    var filtered_id = path.parse(String(queryData.id)).base;
 
     console.log(queryData.id);
     console.log(pathname);
@@ -70,14 +72,12 @@ var app = http.createServer(function(request,response){
             title = queryData.id;
             description = des;
 
-            // 출력 정보 보안
-            // var sanitized_title = sanitizeHtml(title);
-            // var sanitized_description = sanitizeHtml(description, {
-            //   allowedTags: ['b']
-            // });
+            // 출력 보안 처리
+            sanitized_title = sanitizeHtml(title);
+            sanitized_description = sanitizeHtml(description, {allowedTags:['h1']});
           }
 
-          var _template = template.Html(title, list, description);
+          var _template = template.Html(sanitized_title, list, sanitized_description);
 
 
           response.writeHead(200);
